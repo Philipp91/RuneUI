@@ -2128,7 +2128,7 @@ if ($('#section-index').length) {
             var el = $(this);
             if (!$(e.target).hasClass('db-action')) {
                 $('li.active', '#database-entries').removeClass('active');
-				if (el.hasClass('enqueued')) return;
+				if (el.hasClass('enqueued') && !el.hasClass('db-radio')) return;
                 el.addClass('active').addClass('enqueued');
                 var path = el.data('path');
                 // console.log('doubleclicked path = ', path);
@@ -2142,7 +2142,7 @@ if ($('#section-index').length) {
                 } else {
                     path = (el.hasClass('db-dirble')) ? path.split(' | ')[1] : path;
                     getDB({
-                        cmd: 'add',
+                        cmd: el.hasClass('db-radio') ? 'addplay' : 'add',
                         path: path
                     });
                 }
