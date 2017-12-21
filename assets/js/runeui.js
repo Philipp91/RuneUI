@@ -2138,7 +2138,7 @@ if ($('#section-index').length) {
                 } else {
                     path = (el.hasClass('db-dirble')) ? path.split(' | ')[1] : path;
                     getDB({
-                        cmd: 'addplay',
+                        cmd: 'add',
                         path: path
                     });
                 }
