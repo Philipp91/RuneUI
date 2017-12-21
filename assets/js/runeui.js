@@ -682,7 +682,7 @@ function getPlaylistPlain(data) {
                 totaltime = '<span>' + timeConvert2(time) + '</span>';
             }
             pos++;
-            content += '<li id="pl-' + songid + '"' + (state !== 'stop' && pos === current ? ' class="active"' : '') + '><i class="fa fa-times-circle pl-action" title="Remove song from playlist"></i><span class="sn">' + title + totaltime + '</span><span class="bl">' + bottomline + '</span></li>';
+            content += '<li id="pl-' + songid + '" data-path="' + str.replace(/\"/g,'&quot;') + '"' + (state !== 'stop' && pos === current ? ' class="active"' : '') + '><i class="fa fa-times-circle pl-action" title="Remove song from playlist"></i><span class="sn">' + title + totaltime + '</span><span class="bl">' + bottomline + '</span></li>';
             time = ''; artist = ''; album = ''; title = ''; name = '';
         }
     }
@@ -851,8 +851,11 @@ function parseResponse(options) {
                     content = '<li id="db-' + (i + 1) + '" data-path="';
                     if (inputArr.Title !== undefined) {
                     // files
-                        content += inputArr.file;
-                        content += '"><i class="fa fa-bars db-action" title="Actions" data-toggle="context" data-target="#context-menu-file"></i><i class="fa fa-music db-icon"></i><span class="sn">';
+                        content += inputArr.file + '"';
+						if ($('#playlist').find('li[data-path="' + inputArr.file.replace(/\"/g,'&quot;') + '"]').length) {
+							content += ' class="enqueued"';
+						}
+                        content += '><i class="fa fa-bars db-action" title="Actions" data-toggle="context" data-target="#context-menu-file"></i><i class="fa fa-music db-icon"></i><span class="sn">';
                         content += inputArr.Title + ' <span>' + timeConvert(inputArr.Time) + '</span></span>';
                         content += ' <span class="bl">';
                         content +=  inputArr.Artist;
@@ -2125,7 +2128,8 @@ if ($('#section-index').length) {
             var el = $(this);
             if (!$(e.target).hasClass('db-action')) {
                 $('li.active', '#database-entries').removeClass('active');
-                el.addClass('active');
+				if (el.hasClass('enqueued')) return;
+                el.addClass('active').addClass('enqueued');
                 var path = el.data('path');
                 // console.log('doubleclicked path = ', path);
                 if (el.hasClass('db-spotify')) {
@@ -2283,6 +2287,9 @@ if ($('#section-index').length) {
                         browsemode: GUI.browsemode,
                         querytype: dataType
                     });
+					if (dataCmd == 'add' || dataCmd == 'addplay' || dataCmd == 'addreplaceplay') {
+						$('#database').find('li[data-path="' + path.replace(/\"/g,'&quot;') + '"]').addClass('enqueued');
+					}
                     break;
             }
         });
